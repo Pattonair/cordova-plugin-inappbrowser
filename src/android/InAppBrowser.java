@@ -21,6 +21,7 @@ package org.apache.cordova.inappbrowser;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.http.SslError;
 import android.provider.Browser;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -44,6 +45,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.HttpAuthHandler;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -56,6 +58,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.apache.cordova.BuildConfig;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
 import org.apache.cordova.CordovaArgs;
@@ -1139,6 +1142,14 @@ public class InAppBrowser extends CordovaPlugin {
             return false;
         }
 
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+          if (BuildConfig.DEBUG) {
+            handler.proceed();
+          } else {
+            super.onReceivedSslError(view, handler, error);
+          }
+        }
 
         /*
          * onPageStarted fires the LOAD_START_EVENT
